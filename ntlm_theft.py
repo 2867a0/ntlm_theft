@@ -1,4 +1,4 @@
-#!/usr/bin/env 
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
@@ -239,6 +239,7 @@ def create_xlsx_externalcell(generate,server,filename):
 	print("Created: " + filename + " (OPEN)")
 
 # .odt file with cell based attack
+# https://secureyourit.co.uk/wp/2018/05/01/creating-malicious-odt-files/
 def create_odt_externalcell(generate,server,filename):
 	# Source path
 	src = os.path.join("templates", "odt-template")
